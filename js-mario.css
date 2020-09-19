@@ -1,0 +1,74 @@
+.player {
+    background-color: red;
+    height: 100px;
+    width: 100px;
+    bottom: 0%;
+    position: absolute;
+    opacity: 0.8;
+    /* Note, the spaces between the minus sign are important here */
+    left: calc(50% - 25px);
+
+    /* TRANSFORM IS ALSO DANGEROUS FOR USING BOUNDING CLIENT RECT IT will transform after each movement.  
+    transform: translateX(-55px);*/  
+
+    /* top: 100%; we don't want to place this 100% from the top because that will start the element at the bottom of the page so it will overflow. */
+    /*left: 50%;*/
+    
+    /* These are required to centre the element. We can also do the following CAREFUL THIS IS DANGEROUS BECAUSE IT USES MARGINS RATHER THAN POSITION. */
+    /* position: absolute;
+    left: 0; right: 0;
+    margin: auto; */
+    /*
+    position: absolute;
+    left: calc(50% - 25px); */ /* Option 1 */
+    /* Option 2 
+    left: 50%;
+    margin-left: -200px;
+    */
+    /* Option 3
+    left: 50%;
+    transform: translatex(-200px);
+    */
+}
+
+.enemy {
+    width: 150px;
+    height: 150px;
+    position: absolute;
+    background-color: blue;
+}
+.wall {
+    background-color: brown;
+    position: absolute;
+    bottom: 0%;
+    opacity: 0.8;
+}
+
+/* These are needed because otherwise the scroll bar pops up and shifts the screen down */
+html {
+    overflow-y: scroll;
+    overflow-x: scroll;
+ }
+
+
+
+
+
+/* How to make things centred with a flexbox.
+html {
+    margin: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0px;
+
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-end;
+}
+*/
