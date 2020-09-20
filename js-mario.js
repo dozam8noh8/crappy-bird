@@ -1,7 +1,11 @@
 
-(function playGame() {
+function playGame() {
     createGameState();
+    document.addEventListener('keydown', getPlayerMove);
+
     let player = document.getElementById("player");
+    let scroller = document.getElementById("scroll-slider");
+    console.log(scroller)
     // Set initial styling.
     let rect = player.getBoundingClientRect();
     player.style.top = rect.top;
@@ -9,15 +13,17 @@
     let gameOver = false;
     let win = false;
     let gravity = 5;
+    let scrollAmount = scroller?.value || 12.5;
+    console.log(scrollAmount)
     let gravitySpeed = 0;
     let gravityInterval = setInterval(applyGravity, 100);
     let screenScrollingInterval = setInterval(scrollScreen,50);
-    let wallGenerationInterval = setInterval(generateWall, 5000);
+    let wallGenerationInterval = setInterval(generateWall, 3000);
     
     
     function scrollScreen() {
-        window.scrollBy(12.5, 0);
-        doMove(12.5,0);
+        window.scrollBy(scrollAmount, 0);
+        doMove(scrollAmount,0);
     }
     
     function applyGravity() {
@@ -35,20 +41,6 @@
     
         }
     }
-    (function startGame() {
-        let startButton = document.getElementById("startButton");
-        // console.log("Starting in " + countdown);
-        // countdown -= 1;
-        // let startInterval = setInterval(() => {
-        //     console.log("Starting in " + countdown);
-        //     countdown -= 1;
-        //     if (countdown <= -1) {
-        //         clearInterval(startInterval);
-        //         document.body.removeChild(startButton);
-        //     }
-        // }, 1000)
-        document.addEventListener('keydown', getPlayerMove);
-    })()
     
     function getPlayerMove(event) {
         let dx = 0;
@@ -219,7 +211,7 @@
         // Create Game width
         //<div class="gameScreen" style="width: 500vw; height: 1px; background-color: black;"> </div>
         let width = document.createElement("div");
-        width.style.width = "400vw";
+        width.style.width = "500vw";
         width.style.backgroundColor = "black";
         width.style.height = "1px";
         document.body.appendChild(width);
@@ -251,23 +243,30 @@
         
     }
     function createEndScreenElements(text) {
+        let container = document.createElement("div");
+        container.style.display = "flex";
+        container.style.position = "absolute";
+        container.style.flexDirection = "column";
+        container.style.top = "50%";
+        container.style.left = "50%";
+        document.body.appendChild(container);
         let endText = document.createElement("span");
-        endText.style.position = "absolute";
+        //endText.style.position = "absolute";
         endText.style.backgroundColor = "blue";
         endText.style.fontSize = "400%";
-        endText.style.top = "50%";
-        endText.style.left = "50%";
+        // endText.style.top = "50%";
+        // endText.style.left = "50%";
         endText.textContent = text;
-        document.body.appendChild(endText);
+        container.appendChild(endText);
     
         let endButton = document.createElement("button");
         endButton.textContent = "Play again";
         endButton.style.height = "10vh";
-        endButton.style.top = "60%";
-        endButton.style.left = "50%";
-        endButton.style.position = "absolute";
+        // endButton.style.top = "60%";
+        // endButton.style.left = "50%";
+        // endButton.style.position = "absolute";
         endButton.onclick = playGame;
-        document.body.appendChild(endButton);
+        container.appendChild(endButton);
         document.body.backgroundColor = "#000022";
         let imageUrl = "Vanishing-Stripes.svg";
         document.body.style.backgroundImage = "url('" + imageUrl + "')";
@@ -275,7 +274,9 @@
         console.log(document.body.style.backgroundImage);
         
     }
-})()
+
+
+}
 
 // Apparently this gets the scrollbar width.
 //Element.offsetWidth - Element.clientWidth
