@@ -1,10 +1,13 @@
 
 function playGame() {
+    let levelWidth = 5000;
+
     createGameState();
     document.addEventListener('keydown', getPlayerMove);
 
     let player = document.getElementById("player");
     let scroller = document.getElementById("scroll-slider");
+    let nextWall = 600;
     console.log(scroller)
     // Set initial styling.
     let rect = player.getBoundingClientRect();
@@ -13,12 +16,13 @@ function playGame() {
     let gameOver = false;
     let win = false;
     let gravity = 5;
-    let scrollAmount = scroller?.value || 12.5;
+
+    let scrollAmount = parseInt(scroller?.value) || 13;
     console.log(scrollAmount)
     let gravitySpeed = 0;
     let gravityInterval = setInterval(applyGravity, 100);
     let screenScrollingInterval = setInterval(scrollScreen,50);
-    let wallGenerationInterval = setInterval(generateWall, 3000);
+    //let wallGenerationInterval = setInterval(generateWall, 3000);
     
     
     function scrollScreen() {
@@ -75,8 +79,11 @@ function playGame() {
         // Hack for spreading a DomRect object
         let tmp = JSON.parse(JSON.stringify(playerC));
         let prop = {...tmp};
+        console.log(dx)
         // We should just change the x coordinate so we dont have to change both left and right.
+        console.log("Prop left is ", prop.left);
         prop.left = prop.left + dx;
+        console.log("Prop right is", prop.right);
         prop.right += dx;
         prop.top += dy;
         prop.bottom += dy;
@@ -87,7 +94,10 @@ function playGame() {
     
         gameOver = false;
         win = false;
-    
+        if (parseInt(player.style.left) > nextWall) {
+            generateWall();
+            nextWall+=650;
+        }
         // Check if there is collision with any enemies. If so, game over.
         if (checkForCollisions(enemies, prop)) {
             gameOver = true;
@@ -110,10 +120,14 @@ function playGame() {
             gravitySpeed = 0;
             return -1;
         }
+r                // Move the player to the computed position plus the page offset
+        // (So once we've scrolled we don't get teleported back).
+        player.style.top = (window.pageYOffset + prop.top).toString() + "px";
+        player.style.left = (window.pageXOffset + prop.left).toString() + "px";
         // Don't move the player.
         if (gameOver) {
             clearInterval(gravityInterval);
-            clearInterval(wallGenerationInterval);
+            //clearInterval(wallGenerationInterval);
             clearInterval(screenScrollingInterval);
             document.removeEventListener('keydown', getPlayerMove );
             makeEndScreen("YOU LOSE");
@@ -121,17 +135,14 @@ function playGame() {
         }
         if (win) {
             clearInterval(gravityInterval);
-            clearInterval(wallGenerationInterval);
+            //clearInterval(wallGenerationInterval);
             clearInterval(screenScrollingInterval);
             document.removeEventListener('keydown', getPlayerMove );
             makeEndScreen("YOU WIN!");
             return -1;
         }
     
-        // Move the player to the computed position plus the page offset
-        // (So once we've scrolled we don't get teleported back).
-        player.style.top = (window.pageYOffset + prop.top).toString() + "px";
-        player.style.left = (window.pageXOffset + prop.left).toString() + "px";
+
     
     }
     
@@ -157,6 +168,13 @@ function playGame() {
         return (parseInt(player.style.top) + parseInt(player.clientHeight) >= parseInt(document.documentElement.clientHeight))
     }
     function generateWall() {
+        // If we're within 500 px of the finish line, stop generating walls.
+        console.log(parseInt(player.style.left));
+        console.log(levelWidth - document.documentElement.clientWidth);
+        if (parseInt(player.style.left) > levelWidth - document.documentElement.clientWidth) {
+            return;
+            //clearInterval(wallGenerationInterval);
+        }
         let minWallHeight = 150;
         let maxWallHeight = 700;
     
@@ -193,8 +211,10 @@ function playGame() {
         player.style.top = "50%";
         player.style.bottom = "0%";
         player.style.backgroundColor = "yellow";
+        //player.style.backgroundImage = `url('flappy.png')`;
         player.style.height = "100px";
         player.style.width = "100px";
+        player.style.backgroundSize = "contain";
         player.id = "player";
         document.body.appendChild(player);
     
@@ -205,13 +225,14 @@ function playGame() {
         finishFlag.style.height = "150px";
         finishFlag.style.width = "150px";
         finishFlag.style.position = "absolute";
+        finishFlag.style.left = levelWidth.toString() + "px";
         finishFlag.id = "finish";
         document.body.appendChild(finishFlag);
 
         // Create Game width
         //<div class="gameScreen" style="width: 500vw; height: 1px; background-color: black;"> </div>
         let width = document.createElement("div");
-        width.style.width = "500vw";
+        width.style.width = levelWidth.toString() + "px";
         width.style.backgroundColor = "black";
         width.style.height = "1px";
         document.body.appendChild(width);
@@ -259,7 +280,14 @@ function playGame() {
         endText.textContent = text;
         container.appendChild(endText);
     
+
+
+        let endButtonContainer = document.createElement("div");
+        endButtonContainer.classList.add('end-button-container');
+        document.body.appendChild(endButtonContainer);
         let endButton = document.createElement("button");
+        endButton.classList.add('end-button');
+
         endButton.textContent = "Play again";
         endButton.style.height = "10vh";
         // endButton.style.top = "60%";
@@ -270,8 +298,6 @@ function playGame() {
         document.body.backgroundColor = "#000022";
         let imageUrl = "Vanishing-Stripes.svg";
         document.body.style.backgroundImage = "url('" + imageUrl + "')";
-
-        console.log(document.body.style.backgroundImage);
         
     }
 
@@ -291,5 +317,16 @@ function playGame() {
 - Used a big div to artificially increase screen width. I want it to scroll without the div.\
 - Scroll starts wherever it was when you ended last game
 - Remove walls that are passed.
+- Wall generation should be a function of scrollspeed? Like they should come every x pixels
 */
 //Levels should have the same random seed
+
+
+
+// Top left bottom right 0.//
+// OR remove margin.
+// Or 
+
+/* 
+Break things down into logical steps
+*/
