@@ -70,7 +70,149 @@ html {
      top: 50%;
      left: 50%;
  }
+ .container{
+     position: absolute;
+     top: 0px;
+     left: 0px;
+     right: 0px;
+     bottom: 0px;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     justify-content: space-between;
+ }
+ .menu-container > font {
+     text-align: center;
+     margin-bottom: 100px;
+     font-size: 100px;
+ }
+ .menu-container {
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+ }
+ .menu-container > button {
+     background-color: grey;
+     border-radius: 10px;
+     width: 60%;
+     height: 4vh;
+     margin-bottom: 10px;
+     font-size: 20px;
+ }
 
+ .container .background-square{
+     height: 100px;
+     background-color: red;
+     opacity: 0;
+     fill: aliceblue;
+     width: 100px;
+     position: absolute;
+     border: 6px solid rgba(0, 255, 255, 1);
+
+
+ }
+ .flappy {
+    background: transparent url("rose.png");
+    height: 50%;
+    width: 50%;
+ }
+ .container .background-square:nth-child(1){
+    right: 5%;
+    top: 0%;
+    background-color: transparent;
+    animation: animateleft 3s linear infinite;
+ }
+ .container .background-square:nth-child(2){
+    right: 5%;
+    top: 0%;
+    background-color: transparent;
+    animation: animateright 3s linear infinite;
+ }
+ .container .background-square:nth-child(3){
+    top: 0%;
+    left: 5%;
+    background-color: transparent;
+    animation: animateleft 3s linear infinite;
+ }
+ .container .background-square:nth-child(4){
+    top: 0%;
+    left: 5%;
+    background-color: transparent;
+    animation: animateright 3s linear infinite;
+ }
+ .container .background-square:nth-child(5){
+    right: 5%;
+    top: 0%;
+    background-color: transparent;
+    animation: animateleft 3s 1s linear infinite;
+ }
+ .container .background-square:nth-child(6){
+    right: 5%;
+    top: 0%;
+    background-color: transparent;
+    animation: animateright 3s 1s linear infinite;
+ }
+ .container .background-square:nth-child(7){
+    top: 0%;
+    left: 5%;
+    background-color: transparent;
+    animation: animateleft 3s 1s linear infinite;
+ }
+ .container .background-square:nth-child(8){
+    top: 0%;
+    left: 5%;
+    background-color: transparent;
+    animation: animateright 3s 1s linear infinite;
+ }
+
+ .container .background-square:nth-child(9){
+    right: 5%;
+    top: 0%;
+    background-color: transparent;
+    animation: animateleft 3s 2s linear infinite;
+ }
+ .container .background-square:nth-child(10){
+    right: 5%;
+    top: 0%;
+    background-color: transparent;
+    animation: animateright 3s 2s linear infinite;
+ }
+ .container .background-square:nth-child(11){
+    top: 0%;
+    left: 5%;
+    background-color: transparent;
+    animation: animateleft 3s 2s linear infinite;
+ }
+ .container .background-square:nth-child(12){
+    top: 0%;
+    left: 5%;
+    background-color: transparent;
+    animation: animateright 3s 2s linear infinite;
+ }
+
+ @keyframes animateleft {
+     0% {
+         transform: scale(0) translateY(0) rotate(0);
+         opacity: 1;
+     }
+     100% {
+         transform: scale(1) translateY(100vh) rotate(360deg);
+         opacity: 0.1;
+     }
+ }
+ @keyframes animateright {
+    0% {
+        transform: scale(0) translateY(0) rotate(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) translateY(100vh) rotate(-360deg);
+        opacity: 0.1;
+    }
+}
 
 
 

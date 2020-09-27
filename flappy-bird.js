@@ -1,14 +1,14 @@
 
 function playGame() {
     let levelWidth = 5000;
-
+    // Get the menu screen, if its none, its because we've cleared the html.
+    menu.hide();
     createGameState();
     document.addEventListener('keydown', getPlayerMove);
 
     let player = document.getElementById("player");
     let scroller = document.getElementById("scroll-slider");
     let nextWall = 600;
-    console.log(scroller)
     // Set initial styling.
     let rect = player.getBoundingClientRect();
     player.style.top = rect.top;
@@ -18,7 +18,6 @@ function playGame() {
     let gravity = 5;
 
     let scrollAmount = parseInt(scroller?.value) || 13;
-    console.log(scrollAmount)
     let gravitySpeed = 0;
     let gravityInterval = setInterval(applyGravity, 100);
     let screenScrollingInterval = setInterval(scrollScreen,50);
@@ -120,7 +119,7 @@ function playGame() {
             gravitySpeed = 0;
             return -1;
         }
-r                // Move the player to the computed position plus the page offset
+        // Move the player to the computed position plus the page offset
         // (So once we've scrolled we don't get teleported back).
         player.style.top = (window.pageYOffset + prop.top).toString() + "px";
         player.style.left = (window.pageXOffset + prop.left).toString() + "px";
@@ -220,11 +219,7 @@ r                // Move the player to the computed position plus the page offse
     
         // Create finish flag
         let finishFlag = document.createElement("div");
-        finishFlag.style.bottom = "0%";
-        finishFlag.style.backgroundColor = "blue";
-        finishFlag.style.height = "150px";
-        finishFlag.style.width = "150px";
-        finishFlag.style.position = "absolute";
+        finishFlag.classList.add('finish-flag');
         finishFlag.style.left = levelWidth.toString() + "px";
         finishFlag.id = "finish";
         document.body.appendChild(finishFlag);
@@ -304,6 +299,48 @@ r                // Move the player to the computed position plus the page offse
 
 }
 
+class MenuScreen {
+    constructor(){
+        let container = document.createElement("div");
+        this.fullScreenContainer = container;
+        container.classList.add('container');
+        container.id = "fullscreen-container";
+        container.innerHTML = `
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+        <div class="background-square"> </div>
+    
+        <div class="menu-container">
+            <font> Welcome to Crappy Bird </font>
+            <button onclick="playGame()">Play Game</button>
+            <button>Level Select (WIP)</button>
+            <button> View hiscores </button>
+            <div>
+                <label> Scroll Speed 
+                    0 <input type="range" id="scroll-slider" min="0" max="25"> 25    
+                </label>
+            </div>
+            </div>
+        
+        `
+        document.body.appendChild(container);
+        this.menuOptions = document.getElementById("menu-container");
+    }
+    hide() {
+        this.fullScreenContainer.style.display = "none";
+    }
+}
+
+let menu = new MenuScreen();
 // Apparently this gets the scrollbar width.
 //Element.offsetWidth - Element.clientWidth
 
