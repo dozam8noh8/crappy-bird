@@ -1,7 +1,8 @@
+var levelWidth = 5000;
+var playerClass = new Player();
 
 function playGame() {
-    let levelWidth = 5000;
-    // Get the menu screen, if its none, its because we've cleared the html.
+    // Hide the menu
     menu.hide();
     createGameState();
     document.addEventListener('keydown', getPlayerMove);
@@ -11,8 +12,8 @@ function playGame() {
     let nextWall = 600;
     // Set initial styling.
     let rect = player.getBoundingClientRect();
-    player.style.top = rect.top;
-    player.style.left = rect.left;
+    player.style.top = "50%";
+    player.style.left = "30%";
     let gameOver = false;
     let win = false;
     let gravity = 5;
@@ -94,7 +95,7 @@ function playGame() {
         gameOver = false;
         win = false;
         if (parseInt(player.style.left) > nextWall) {
-            generateWall();
+            let wall = new Wall();
             nextWall+=650;
         }
         // Check if there is collision with any enemies. If so, game over.
@@ -129,7 +130,7 @@ function playGame() {
             //clearInterval(wallGenerationInterval);
             clearInterval(screenScrollingInterval);
             document.removeEventListener('keydown', getPlayerMove );
-            makeEndScreen("YOU LOSE");
+            playerClass.dead();
             return -1;
         }
         if (win) {
@@ -137,7 +138,7 @@ function playGame() {
             //clearInterval(wallGenerationInterval);
             clearInterval(screenScrollingInterval);
             document.removeEventListener('keydown', getPlayerMove );
-            makeEndScreen("YOU WIN!");
+            playerClass.dead();
             return -1;
         }
     
@@ -166,56 +167,10 @@ function playGame() {
     function playerBelowScreen () {
         return (parseInt(player.style.top) + parseInt(player.clientHeight) >= parseInt(document.documentElement.clientHeight))
     }
-    function generateWall() {
-        // If we're within 500 px of the finish line, stop generating walls.
-        console.log(parseInt(player.style.left));
-        console.log(levelWidth - document.documentElement.clientWidth);
-        if (parseInt(player.style.left) > levelWidth - document.documentElement.clientWidth) {
-            return;
-            //clearInterval(wallGenerationInterval);
-        }
-        let minWallHeight = 150;
-        let maxWallHeight = 700;
     
-        let topWallHeight = minWallHeight + Math.random() * (maxWallHeight - minWallHeight);
-        // We will have a 250px gap to squeeze through.
-        let botWallHeight = document.documentElement.clientHeight - topWallHeight - 250;
-        let wallWidth = 150;
-    
-        let playerC = player.getBoundingClientRect();
-    
-        // Create TopWall
-        let topWall = document.createElement("div");
-        topWall.style.height = topWallHeight.toString() + "px";
-        topWall.style.width = wallWidth.toString() + "px";
-        topWall.style.left = (document.documentElement.clientWidth + window.pageXOffset).toString() + "px";
-        topWall.className = "wall";
-        topWall.style.top = "0%";
-        document.body.appendChild(topWall);
-        
-        // Create BottomWall
-        let botWall = document.createElement("div");
-        botWall.style.height = botWallHeight.toString() + "px";
-        botWall.style.width = wallWidth.toString() + "px";
-        botWall.style.left = (document.documentElement.clientWidth + window.pageXOffset).toString() + "px";
-        botWall.style.bottom = "0%"
-        botWall.className = "wall";
-        document.body.appendChild(botWall);
-    }
     
     function createGameState() {
-        // Create player
-        let player = document.createElement("div");
-        player.style.position = "absolute";
-        player.style.top = "50%";
-        player.style.bottom = "0%";
-        player.style.backgroundColor = "yellow";
-        //player.style.backgroundImage = `url('flappy.png')`;
-        player.style.height = "100px";
-        player.style.width = "100px";
-        player.style.backgroundSize = "contain";
-        player.id = "player";
-        document.body.appendChild(player);
+        document.body.appendChild(playerClass.element);
     
         // Create finish flag
         let finishFlag = document.createElement("div");
@@ -232,111 +187,6 @@ function playGame() {
         width.style.height = "1px";
         document.body.appendChild(width);
 
-    }
-    
-    
-    function makeEndScreen(text) {
-        console.log("Making loss screen");
-        // Use promises for this? Or an interval that counts then clears itself.
-        (function flashPlayer() {
-            setTimeout(() => {
-                player.style.backgroundColor = "white"
-                setTimeout(() => {
-                    player.style.backgroundColor = "black"
-                    setTimeout(() => {
-                        player.style.backgroundColor = "white"
-                        setTimeout(() => {
-                            // Clears the whole DOM.
-                            document.body.innerHTML = '';
-                            
-                            createEndScreenElements(text);
-                        }, 1000)
-                    }, 300);
-                }, 200);
-            }, 100);
-    
-        })();
-        
-    }
-    function createEndScreenElements(text) {
-        let container = document.createElement("div");
-        container.style.display = "flex";
-        container.style.position = "absolute";
-        container.style.flexDirection = "column";
-        container.style.top = "50%";
-        container.style.left = "50%";
-        document.body.appendChild(container);
-        let endText = document.createElement("span");
-        //endText.style.position = "absolute";
-        endText.style.backgroundColor = "blue";
-        endText.style.fontSize = "400%";
-        // endText.style.top = "50%";
-        // endText.style.left = "50%";
-        endText.textContent = text;
-        container.appendChild(endText);
-    
-
-
-        let endButtonContainer = document.createElement("div");
-        endButtonContainer.classList.add('end-button-container');
-        document.body.appendChild(endButtonContainer);
-        let endButton = document.createElement("button");
-        endButton.classList.add('end-button');
-
-        endButton.textContent = "Play again";
-        endButton.style.height = "10vh";
-        // endButton.style.top = "60%";
-        // endButton.style.left = "50%";
-        // endButton.style.position = "absolute";
-        endButton.onclick = playGame;
-        container.appendChild(endButton);
-        document.body.backgroundColor = "#000022";
-        let imageUrl = "Vanishing-Stripes.svg";
-        document.body.style.backgroundImage = "url('" + imageUrl + "')";
-        
-    }
-
-
-}
-
-class MenuScreen {
-    constructor(){
-        let container = document.createElement("div");
-        this.fullScreenContainer = container;
-        container.classList.add('container');
-        container.id = "fullscreen-container";
-        container.innerHTML = `
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-        <div class="background-square"> </div>
-    
-        <div class="menu-container">
-            <font> Welcome to Crappy Bird </font>
-            <button onclick="playGame()">Play Game</button>
-            <button>Level Select (WIP)</button>
-            <button> View hiscores </button>
-            <div>
-                <label> Scroll Speed 
-                    0 <input type="range" id="scroll-slider" min="0" max="25"> 25    
-                </label>
-            </div>
-            </div>
-        
-        `
-        document.body.appendChild(container);
-        this.menuOptions = document.getElementById("menu-container");
-    }
-    hide() {
-        this.fullScreenContainer.style.display = "none";
     }
 }
 

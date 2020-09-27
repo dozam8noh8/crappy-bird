@@ -1,4 +1,8 @@
 .player {
+    position: absolute;
+    background-color: yellow;
+    height: 100px;
+    width: 100px;
     /* background-color: yellow;
     height: 100px;
     width: 100px;
@@ -70,6 +74,13 @@ html {
      top: 50%;
      left: 50%;
  }
+ .end-screen {
+     display: flex;
+     position: absolute;
+     flex-direction: column;
+     top: 50%;
+     left: 50%;
+ }
  .container{
      position: absolute;
      top: 0px;
@@ -102,7 +113,11 @@ html {
      margin-bottom: 10px;
      font-size: 20px;
  }
-
+.menu-button:hover {
+    transition: 0.3s;
+    background-color: white;
+    cursor: pointer;
+}
  .container .background-square{
      height: 100px;
      background-color: red;
