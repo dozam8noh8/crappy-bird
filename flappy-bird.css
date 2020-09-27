@@ -130,9 +130,7 @@ html {
 
  }
  .flappy {
-    background: transparent url("rose.png");
-    height: 50%;
-    width: 50%;
+    width: 200px;
  }
  .container .background-square:nth-child(1){
     right: 5%;

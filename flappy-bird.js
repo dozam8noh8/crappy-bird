@@ -9,14 +9,14 @@ function playGame() {
 
     let player = document.getElementById("player");
     let scroller = document.getElementById("scroll-slider");
-    let nextWall = 600;
     // Set initial styling.
-    let rect = player.getBoundingClientRect();
     player.style.top = "50%";
     player.style.left = "30%";
+    player.style.backgroundColor = "yellow";
     let gameOver = false;
     let win = false;
     let gravity = 5;
+    Wall.nextWall = 600;
 
     let scrollAmount = parseInt(scroller?.value) || 13;
     let gravitySpeed = 0;
@@ -31,12 +31,8 @@ function playGame() {
     }
     
     function applyGravity() {
-        gravitySpeed += gravity;
-        let playerC = player.getBoundingClientRect();
-        //window.scrollBy(50, 0)
-        // TRY DOCUMENT.DOCUMENTELEMENT.CLIENTHEIGHT
-        // Do this on the gravity collision detection rather than 
-    
+        // Add to the gravity to give acceleration effect
+        gravitySpeed += gravity;    
         for (let i =0; i < gravitySpeed; i++) {
             if (gameOver || win) {
                 break;
@@ -45,7 +41,7 @@ function playGame() {
     
         }
     }
-    
+    // Get player input of "WASD" and turn it into a movement.
     function getPlayerMove(event) {
         let dx = 0;
         let dy = 0;
@@ -66,6 +62,8 @@ function playGame() {
                 dy += 1;
                 break;
         }
+        // Instead of moving x distance once, we move 1 distance x times. 
+        // This means smoother movement but also much more collision detection code to run.
         for (let i = 0; i < moveDistance; i++){
             if (gameOver || win) {
                 break;
@@ -79,11 +77,8 @@ function playGame() {
         // Hack for spreading a DomRect object
         let tmp = JSON.parse(JSON.stringify(playerC));
         let prop = {...tmp};
-        console.log(dx)
         // We should just change the x coordinate so we dont have to change both left and right.
-        console.log("Prop left is ", prop.left);
         prop.left = prop.left + dx;
-        console.log("Prop right is", prop.right);
         prop.right += dx;
         prop.top += dy;
         prop.bottom += dy;
@@ -94,9 +89,9 @@ function playGame() {
     
         gameOver = false;
         win = false;
-        if (parseInt(player.style.left) > nextWall) {
+        if (parseInt(player.style.left) > Wall.getNextWall()) {
+            Wall.setNextWall();
             let wall = new Wall();
-            nextWall+=650;
         }
         // Check if there is collision with any enemies. If so, game over.
         if (checkForCollisions(enemies, prop)) {

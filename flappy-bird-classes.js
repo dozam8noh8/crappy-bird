@@ -80,6 +80,13 @@ class Wall {
         botWall.className = "wall";
         document.body.appendChild(botWall);
     }
+    static getNextWall() {
+        this.nextWall = this.nextWall || 600;
+        return this.nextWall;
+    }
+    static setNextWall () {
+        this.nextWall += 650;
+    }
     
 }
 
@@ -97,21 +104,20 @@ class Player{
     }
     dead() {
         let player = this.element;
-        setTimeout(() => {
-            player.style.backgroundColor = "white"
-            setTimeout(() => {
-                player.style.backgroundColor = "black"
-                setTimeout(() => {
-                    player.style.backgroundColor = "white"
-                    setTimeout(() => {
-                        // Clears the whole DOM.
-                        document.body.innerHTML = '';
-                        
-                        new EndScreen();
-                    }, 1000)
-                }, 300);
-            }, 200);
-        }, 100);
+        player.style.backgroundColor = "white"
+        delay(400).then(() =>  { player.style.backgroundColor = "black" })
+        .then(() => delay(400).then(() =>  { player.style.backgroundColor = "white" })        )
+        .then(() => delay(400).then(() => { player.style.backgroundColor = "black" }))
+        .then(() => delay(400).then(() =>  { 
+            player.style.backgroundColor = "white" 
+        }))
+        .then(() => delay(400).then(() => {
+            document.body.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
+            new EndScreen();
+        }))
+
+
+
     }
 }
 
