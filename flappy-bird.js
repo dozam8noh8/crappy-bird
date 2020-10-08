@@ -1,15 +1,28 @@
 var levelWidth = 5000;
 var playerClass = new Player();
-window.menuScreen = new MenuScreen();
-window.endScreen = new EndScreen();
+function createAllScreens () {
+    window.menuScreen = new MenuScreen();
+    window.endScreen = new EndScreen();
+    window.instructionScreen = new InstructionScreen();
+}
+createAllScreens();
 showMainMenu();
 function showMainMenu() {
+    hideAll();
     window.menuScreen.show();
-    window.endScreen.hide();
 }
 function showEndScreen() {
-    window.menuScreen.hide();
+    hideAll();
     window.endScreen.show();
+}
+function showInstructions () {
+    hideAll();
+    window.instructionScreen.show();
+}
+function hideAll() {
+    window.menuScreen.hide();
+    window.endScreen.hide();
+    window.instructionScreen.hide();
 }
 function playGame() {
     // Hide the window.menuScreen

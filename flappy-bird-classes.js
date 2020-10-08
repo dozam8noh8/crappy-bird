@@ -1,3 +1,25 @@
+class InstructionScreen {
+    constructor() {
+        let container = document.createElement("div");
+        this.fullScreenContainer = container;
+        container.classList.add('container');
+        container.innerHTML = `
+        <div class="menu-container">
+            <font> WASD to move </font>
+            <font> Dont hit the walls </font>
+            <font> Get to the blue square to finish </font>
+            <button class="menu-button" onclick="showMainMenu()">Back to main menu</button>
+        </div>
+        `
+        document.body.appendChild(this.fullScreenContainer)
+    }
+    hide () {
+        this.fullScreenContainer.style.display = 'none';
+    }
+    show () {
+        this.fullScreenContainer.style.display = 'flex';
+    }
+}
 class GameScreen {
     gameScreen;
     constructor() {
@@ -26,12 +48,13 @@ class MenuScreen {
         <div class="background-square"> </div>
     
         <div class="menu-container">
-            <font> Welcome to Crappy Bird </font>
+            <font class="menu-text"> Welcome to Crappy Bird </font>
             <button class="menu-button" onclick="playGame()">Play Game</button>
+            <button class="menu-button" onclick="showInstructions()"> Instructions </button>
             <button class="menu-button" >Level Select (WIP)</button>
-            <button class="menu-button"> View hiscores </button>
+            <button class="menu-button"> View hiscores (WIP)</button>
             <div>
-                <label> Scroll Speed 
+                <label> Difficulty
                     0 <input type="range" id="scroll-slider" min="0" max="25"> 25    
                 </label>
             </div>
@@ -130,9 +153,9 @@ class Player{
         }))
         .then(() => delay(400).then(() => {
             document.body.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
-            endScreen = new EndScreen();
-            window.menuScreen = new MenuScreen();
-            window.menuScreen.hide();
+            createAllScreens();
+            hideAll();
+            window.endScreen.show();
             
         }))
 
@@ -157,7 +180,7 @@ class EndScreen {
 
         container.innerHTML = `
             <div class="menu-container">
-                <font>  Oh dear, you are dead!  </font>
+                <font class="menu-text">  Oh dear, you are dead!  </font>
                 <button class="menu-button" onclick="playGame()"> Play again </button>
                 <button class="menu-button" onclick="showMainMenu()">Back to main menu</button>
             </div>
@@ -172,6 +195,9 @@ class EndScreen {
     }
     hide() {
         this.container.style.display = 'none';
+    }
+    show() {
+        this.container.style.display = 'flex';
     }
     toMenu() {
         this.hide();
