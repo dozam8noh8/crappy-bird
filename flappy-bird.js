@@ -1,8 +1,12 @@
+var DEBUG = false;
 var levelWidth = 5000;
 var playerClass = new Player();
-function createAllScreens () {
+var walls = [];
+var score = 0;
+function createAllScreens (hasWon) {
     window.menuScreen = new MenuScreen();
-    window.endScreen = new EndScreen();
+    let endText = hasWon ? "You win!" : "You lose";
+    window.endScreen = new EndScreen(endText);
     window.instructionScreen = new InstructionScreen();
 }
 createAllScreens();
@@ -23,6 +27,10 @@ function hideAll() {
     window.menuScreen.hide();
     window.endScreen.hide();
     window.instructionScreen.hide();
+}
+function addToScore() {
+    let scoreElement = document.getElementById("score");
+    scoreElement.innerText = parseInt(scoreElement.innerText) + 1;
 }
 function playGame() {
     // Hide the window.menuScreen
@@ -47,7 +55,6 @@ function playGame() {
     let gravityInterval = setInterval(applyGravity, 100);
     let screenScrollingInterval = setInterval(scrollScreen,50);
     //let wallGenerationInterval = setInterval(generateWall, 3000);
-    
     
     function scrollScreen() {
         window.scrollBy(scrollAmount, 0);
@@ -108,14 +115,17 @@ function playGame() {
         prop.bottom += dy;
     
         let enemies = document.getElementsByClassName("enemy");
-        let walls = document.getElementsByClassName("wall");
+        //let walls = document.getElementsByClassName("wall");
         let finishEl = document.getElementById('finish');
     
         gameOver = false;
         win = false;
-        if (parseInt(player.style.left) > Wall.getNextWall()) {
-            Wall.setNextWall();
-            let wall = new Wall();
+        if (parseInt(player.style.left) > Wall.getNextWall() && !(parseInt(player.style.left) > levelWidth - document.documentElement.clientWidth)) {
+            // If we're within 500 px of the finish line, stop generating walls.
+                    //clearInterval(wallGenerationInterval);
+                Wall.setNextWall();
+                let wall = new Wall();
+                walls.push(wall);
         }
         // Check if there is collision with any enemies. If so, game over.
         if (checkForCollisions(enemies, prop)) {
@@ -123,7 +133,7 @@ function playGame() {
             // We lose.
         }
     
-        if (checkForCollisions(walls, prop)){
+        if (checkForCollisions(getWallElements(), prop)){
             gameOver = true;
             // We lose.
         }
@@ -132,7 +142,7 @@ function playGame() {
             win = true;
             // We win.
         }
-    
+        
         // If the player is going downwards and is at the bottom of the screen
         if ((dy > 0) && playerBelowScreen()){
             // Reset gravity
@@ -143,8 +153,12 @@ function playGame() {
         // (So once we've scrolled we don't get teleported back).
         player.style.top = (window.pageYOffset + prop.top).toString() + "px";
         player.style.left = (window.pageXOffset + prop.left).toString() + "px";
+
+        checkScore();
+
         // Don't move the player.
         if (gameOver) {
+            if (DEBUG) return;
             clearInterval(gravityInterval);
             //clearInterval(wallGenerationInterval);
             clearInterval(screenScrollingInterval);
@@ -157,7 +171,7 @@ function playGame() {
             //clearInterval(wallGenerationInterval);
             clearInterval(screenScrollingInterval);
             document.removeEventListener('keydown', getPlayerMove );
-            playerClass.dead();
+            playerClass.win();
             return -1;
         }
     
@@ -165,12 +179,15 @@ function playGame() {
     
     }
     
-    
-    
-    
+    function checkScore() {
+        for (let wall of walls) {
+            if (parseInt(player.style.left) > parseInt(wall.topWall.style.left) && !wall.scoreConsumed) {
+                wall.consumeWallScore();
+            }
+        }
+    }
     
     function checkForCollisions(objects, prop) {
-    
         // Check to see if the player collides with any objects
         for (let object of objects){
             let border = object.getBoundingClientRect();
@@ -206,7 +223,16 @@ function playGame() {
         width.style.height = "1px";
         document.body.appendChild(width);
 
+        let scoreElement = document.createElement("span");
+        scoreElement.id = "score";
+        scoreElement.innerText = "0";
+        document.body.appendChild(scoreElement);
+
     }
+
+}
+function getWallElements() {
+    return walls.map(wall => [wall.topWall, wall.botWall]).flat();
 }
 
 // Apparently this gets the scrollbar width.

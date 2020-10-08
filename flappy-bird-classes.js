@@ -51,8 +51,8 @@ class MenuScreen {
             <font class="menu-text"> Welcome to Crappy Bird </font>
             <button class="menu-button" onclick="playGame()">Play Game</button>
             <button class="menu-button" onclick="showInstructions()"> Instructions </button>
-            <button class="menu-button" >Level Select (WIP)</button>
-            <button class="menu-button"> View hiscores (WIP)</button>
+            <button class="menu-button" disabled="true" >Level Select (WIP)</button>
+            <button class="menu-button"  disabled="true"> View hiscores (WIP)</button>
             <div>
                 <label> Difficulty
                     0 <input type="range" id="scroll-slider" min="0" max="25"> 25    
@@ -74,15 +74,12 @@ class MenuScreen {
 
 
 class Wall {
+    topWall;
+    botWall;
     minWallHeight = 150;
     maxWallHeight = 700;
+    scoreConsumed = false; // A wall can only increase score once when a player passes through, once they are passed we set consume to true
     constructor() {
-// If we're within 500 px of the finish line, stop generating walls.
-        if (parseInt(player.style.left) > levelWidth - document.documentElement.clientWidth) {
-            return;
-            //clearInterval(wallGenerationInterval);
-        }
-
 
         let topWallHeight = this.minWallHeight + Math.random() * (this.maxWallHeight - this.minWallHeight);
         // We will have a 250px gap to squeeze through.
@@ -92,33 +89,47 @@ class Wall {
         let playerC = player.getBoundingClientRect();
 
         // Create TopWall
-        let topWall = document.createElement("div");
-        topWall.style.height = topWallHeight.toString() + "px";
-        topWall.style.width = wallWidth.toString() + "px";
-        topWall.style.left = (document.documentElement.clientWidth + window.pageXOffset).toString() + "px";
-        topWall.className = "wall";
-        topWall.style.top = "0%";
-        document.body.appendChild(topWall);
+        this.topWall = document.createElement("div");
+        this.topWall.style.height = topWallHeight.toString() + "px";
+        this.topWall.style.width = wallWidth.toString() + "px";
+        this.topWall.style.left = (document.documentElement.clientWidth + window.pageXOffset).toString() + "px";
+        this.topWall.className = "wall";
+        this.topWall.style.top = "0%";
+        document.body.appendChild(this.topWall);
 
         // Create BottomWall
-        let botWall = document.createElement("div");
-        botWall.style.height = botWallHeight.toString() + "px";
-        botWall.style.width = wallWidth.toString() + "px";
-        botWall.style.left = (document.documentElement.clientWidth + window.pageXOffset).toString() + "px";
-        botWall.style.bottom = "0%"
-        botWall.className = "wall";
-        document.body.appendChild(botWall);
+        this.botWall = document.createElement("div");
+        this.botWall.style.height = botWallHeight.toString() + "px";
+        this.botWall.style.width = wallWidth.toString() + "px";
+        this.botWall.style.left = (document.documentElement.clientWidth + window.pageXOffset).toString() + "px";
+        this.botWall.style.bottom = "0%"
+        this.botWall.className = "wall";
+        document.body.appendChild(this.botWall);
 
         // Remove existing walls that are out of the screen, to decrease collision detection logic.
         this.removePassedWalls()
     }
     removePassedWalls() {
-        let walls = document.getElementsByClassName("wall");
         for (let wall of walls){ 
-            if (parseInt(wall.style.left) < window.pageXOffset) {
-                document.body.removeChild(wall);
+            if (parseInt(wall.topWall.style.left) < window.pageXOffset) {
+                walls = walls.filter(el => {
+                    if (el !== wall) console.log("REMOVING THIS WALL", wall);
+                    return el !== wall
+                })
+                document.body.removeChild(wall.topWall);
+                document.body.removeChild(wall.botWall);
+
             }
         }
+        console.log(walls);
+    }
+    consumeWallScore() {
+        this.scoreConsumed = true;
+        addToScore();
+    }
+
+    getWalls() {
+        return [this.topWall, this.botWall];
     }
     static getNextWall() {
         this.nextWall = this.nextWall || 600;
@@ -142,24 +153,33 @@ class Player{
         this.element.style.backgroundSize = "contain";
         this.element.id = "player";
     }
-    dead() {
+    async dead() {
+        await this.endGame();
+        document.body.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
+        createAllScreens();
+        hideAll();
+        window.endScreen.show();
+            
+    }
+    async win() {
+        await this.endGame();
+        document.body.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
+        createAllScreens(true);
+        hideAll();
+        window.endScreen.show();
+    }
+    async endGame() {
         let player = this.element;
         player.style.backgroundColor = "white"
-        delay(400).then(() =>  { player.style.backgroundColor = "black" })
-        .then(() => delay(400).then(() =>  { player.style.backgroundColor = "white" })        )
-        .then(() => delay(400).then(() => { player.style.backgroundColor = "black" }))
-        .then(() => delay(400).then(() =>  { 
-            player.style.backgroundColor = "white" 
-        }))
-        .then(() => delay(400).then(() => {
-            document.body.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
-            createAllScreens();
-            hideAll();
-            window.endScreen.show();
-            
-        }))
-
-
+        await delay(400);
+        player.style.backgroundColor = "black";
+        await delay(400);
+        player.style.backgroundColor = "white";
+        await delay(400);
+        player.style.backgroundColor = "black";
+        await delay(400);
+        player.style.backgroundColor = "white";
+        await delay(400);
 
     }
 }
@@ -172,15 +192,16 @@ function delay(time) {
 
 
 class EndScreen {
-    text = "You lose";
+    text = "Oh dear, you are dead!";
     container;
-    constructor (){
+    constructor (endText){
         let container = document.createElement("div");
+        this.text = endText
         container.classList.add("container");
 
         container.innerHTML = `
             <div class="menu-container">
-                <font class="menu-text">  Oh dear, you are dead!  </font>
+                <font class="menu-text">  ${this.text}  </font>
                 <button class="menu-button" onclick="playGame()"> Play again </button>
                 <button class="menu-button" onclick="showMainMenu()">Back to main menu</button>
             </div>
