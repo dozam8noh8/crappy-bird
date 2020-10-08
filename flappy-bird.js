@@ -1,9 +1,20 @@
 var levelWidth = 5000;
 var playerClass = new Player();
-
+window.menuScreen = new MenuScreen();
+window.endScreen = new EndScreen();
+showMainMenu();
+function showMainMenu() {
+    window.menuScreen.show();
+    window.endScreen.hide();
+}
+function showEndScreen() {
+    window.menuScreen.hide();
+    window.endScreen.show();
+}
 function playGame() {
-    // Hide the menu
-    menu.hide();
+    // Hide the window.menuScreen
+    window.menuScreen.hide();
+    window.endScreen.hide();
     createGameState();
     document.addEventListener('keydown', getPlayerMove);
 
@@ -185,7 +196,6 @@ function playGame() {
     }
 }
 
-let menu = new MenuScreen();
 // Apparently this gets the scrollbar width.
 //Element.offsetWidth - Element.clientWidth
 

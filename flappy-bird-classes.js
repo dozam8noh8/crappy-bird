@@ -1,4 +1,10 @@
-
+class GameScreen {
+    gameScreen;
+    constructor() {
+        gameScreen = document.createElement("div");
+        this.gameScreen.id = "game-screen";
+    }
+}
 class MenuScreen {
     constructor(){
         let container = document.createElement("div");
@@ -29,7 +35,7 @@ class MenuScreen {
                     0 <input type="range" id="scroll-slider" min="0" max="25"> 25    
                 </label>
             </div>
-            </div>
+        </div>
         
         `
         document.body.appendChild(container);
@@ -79,6 +85,17 @@ class Wall {
         botWall.style.bottom = "0%"
         botWall.className = "wall";
         document.body.appendChild(botWall);
+
+        // Remove existing walls that are out of the screen, to decrease collision detection logic.
+        this.removePassedWalls()
+    }
+    removePassedWalls() {
+        let walls = document.getElementsByClassName("wall");
+        for (let wall of walls){ 
+            if (parseInt(wall.style.left) < window.pageXOffset) {
+                document.body.removeChild(wall);
+            }
+        }
     }
     static getNextWall() {
         this.nextWall = this.nextWall || 600;
@@ -113,7 +130,10 @@ class Player{
         }))
         .then(() => delay(400).then(() => {
             document.body.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
-            new EndScreen();
+            endScreen = new EndScreen();
+            window.menuScreen = new MenuScreen();
+            window.menuScreen.hide();
+            
         }))
 
 
@@ -130,36 +150,32 @@ function delay(time) {
 
 class EndScreen {
     text = "You lose";
+    container;
     constructor (){
         let container = document.createElement("div");
-        container.classList.add("end-screen");
+        container.classList.add("container");
 
+        container.innerHTML = `
+            <div class="menu-container">
+                <font>  Oh dear, you are dead!  </font>
+                <button class="menu-button" onclick="playGame()"> Play again </button>
+                <button class="menu-button" onclick="showMainMenu()">Back to main menu</button>
+            </div>
+        `
+        this.container = container;
         document.body.appendChild(container);
 
-        let endText = document.createElement("span");
-        endText.style.backgroundColor = "blue";
-        endText.style.fontSize = "400%";
-        endText.textContent = this.text;
-        container.appendChild(endText);
     
-    
-    
-        let endButtonContainer = document.createElement("div");
-        endButtonContainer.classList.add('end-button-container');
-        document.body.appendChild(endButtonContainer);
-        let endButton = document.createElement("button");
-        endButton.classList.add('end-button');
-    
-        endButton.textContent = "Play again";
-        endButton.style.height = "10vh";
-        endButton.onclick = playGame;
-        container.appendChild(endButton);
-        document.body.backgroundColor = "#000022";
-        let imageUrl = "Vanishing-Stripes.svg";
-        document.body.style.backgroundImage = "url('" + imageUrl + "')";
+
         
     
     }
-
+    hide() {
+        this.container.style.display = 'none';
+    }
+    toMenu() {
+        this.hide();
+        window.menuScreen.show();
+    }
 
 }

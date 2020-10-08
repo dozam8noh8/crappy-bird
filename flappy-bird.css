@@ -1,3 +1,9 @@
+#game-screen {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 .player {
     position: absolute;
     background-color: yellow;
@@ -105,13 +111,13 @@ html {
     justify-content: center;
     align-items: center;
  }
- .menu-container > button {
-     background-color: grey;
-     border-radius: 10px;
-     width: 60%;
-     height: 4vh;
-     margin-bottom: 10px;
-     font-size: 20px;
+ .menu-button {
+    background-color: grey;
+    border-radius: 10px;
+    width: 60%;
+    height: 4vh;
+    margin-bottom: 10px;
+    font-size: 20px;
  }
 .menu-button:hover {
     transition: 0.3s;
@@ -131,6 +137,7 @@ html {
  }
  .flappy {
     width: 200px;
+    background: rgba(0, 0, 0, 0);
  }
  .container .background-square:nth-child(1){
     right: 5%;
