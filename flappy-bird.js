@@ -1,5 +1,5 @@
 var DEBUG = false;
-var levelWidth = 5000;
+var levelWidth = 50000;
 var playerClass = new Player();
 var walls = [];
 var score = 0;
