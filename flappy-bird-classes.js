@@ -176,9 +176,6 @@ class Player{
         localHighscores.push(highscoreObj);
         createAllScreens();
         hideAll();
-        score = 0;
-        let scoreElement = document.getElementById("score");
-        scoreElement.innerText = score;
         window.endScreen.show();
             
     }

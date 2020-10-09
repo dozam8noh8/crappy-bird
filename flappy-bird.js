@@ -40,11 +40,13 @@ function addToScore() {
 }
 function playGame() {
     // Hide the window.menuScreen
+
     window.menuScreen.hide();
     window.endScreen.hide();
     createGameState();
     document.addEventListener('keydown', getPlayerMove);
 
+    
     let player = document.getElementById("player");
     let scroller = document.getElementById("scroll-slider");
     // Set initial styling.
@@ -61,7 +63,9 @@ function playGame() {
     let gravityInterval = setInterval(applyGravity, 100);
     let screenScrollingInterval = setInterval(scrollScreen,50);
     //let wallGenerationInterval = setInterval(generateWall, 3000);
-    
+    score = 0;
+    let scoreElement = document.getElementById("score");
+    scoreElement.innerText = score;
     function scrollScreen() {
         window.scrollBy(scrollAmount, 0);
         doMove(scrollAmount,0);
