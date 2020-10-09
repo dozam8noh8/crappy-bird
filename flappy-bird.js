@@ -230,7 +230,7 @@ function playGame() {
         width.style.height = "1px";
         gameScreen.appendChild(width);
 
-        let scoreElement = document.createElement("span");
+        let scoreElement = document.getElementById("score");
         scoreElement.id = "score";
         scoreElement.innerText = "0";
         gameScreen.appendChild(scoreElement);
