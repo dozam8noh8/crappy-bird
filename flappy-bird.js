@@ -1,3 +1,7 @@
+/* 
+    Owen Silver
+    2020
+*/
 var DEBUG = false;
 var levelWidth = 50000;
 var playerClass = new Player();
