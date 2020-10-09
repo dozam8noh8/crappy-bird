@@ -11,7 +11,7 @@ class InstructionScreen {
             <button class="menu-button" onclick="showMainMenu()">Back to main menu</button>
         </div>
         `
-        document.body.appendChild(this.fullScreenContainer)
+        gameScreen.appendChild(this.fullScreenContainer)
     }
     hide () {
         this.fullScreenContainer.style.display = 'none';
@@ -23,8 +23,15 @@ class InstructionScreen {
 class GameScreen {
     gameScreen;
     constructor() {
-        gameScreen = document.createElement("div");
+        this.gameScreen = document.createElement("div");
         this.gameScreen.id = "game-screen";
+        document.body.appendChild(this.gameScreen);
+    }
+    hide() {
+        this.gameScreen.style.display = "none";
+    }
+    show() {
+        this.gameScreen.style.display = "flex";
     }
 }
 class MenuScreen {
@@ -61,7 +68,7 @@ class MenuScreen {
         </div>
         
         `
-        document.body.appendChild(container);
+        gameScreen.appendChild(container);
         this.menuOptions = document.getElementById("menu-container");
     }
     hide() {
@@ -95,7 +102,7 @@ class Wall {
         this.topWall.style.left = (document.documentElement.clientWidth + window.pageXOffset).toString() + "px";
         this.topWall.className = "wall";
         this.topWall.style.top = "0%";
-        document.body.appendChild(this.topWall);
+        gameScreen.appendChild(this.topWall);
 
         // Create BottomWall
         this.botWall = document.createElement("div");
@@ -104,7 +111,7 @@ class Wall {
         this.botWall.style.left = (document.documentElement.clientWidth + window.pageXOffset).toString() + "px";
         this.botWall.style.bottom = "0%"
         this.botWall.className = "wall";
-        document.body.appendChild(this.botWall);
+        gameScreen.appendChild(this.botWall);
 
         // Remove existing walls that are out of the screen, to decrease collision detection logic.
         this.removePassedWalls()
@@ -116,8 +123,8 @@ class Wall {
                     if (el !== wall) console.log("REMOVING THIS WALL", wall);
                     return el !== wall
                 })
-                document.body.removeChild(wall.topWall);
-                document.body.removeChild(wall.botWall);
+                gameScreen.removeChild(wall.topWall);
+                gameScreen.removeChild(wall.botWall);
 
             }
         }
@@ -155,7 +162,8 @@ class Player{
     }
     async dead() {
         await this.endGame();
-        document.body.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
+        gameScreen.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
+        walls = []
         createAllScreens();
         hideAll();
         window.endScreen.show();
@@ -207,7 +215,7 @@ class EndScreen {
             </div>
         `
         this.container = container;
-        document.body.appendChild(container);
+        gameScreen.appendChild(container);
 
     
 

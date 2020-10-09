@@ -3,6 +3,9 @@ var levelWidth = 50000;
 var playerClass = new Player();
 var walls = [];
 var score = 0;
+var gameScreenClass = new GameScreen();
+var gameScreen = gameScreenClass.gameScreen;
+
 function createAllScreens (hasWon) {
     window.menuScreen = new MenuScreen();
     let endText = hasWon ? "You win!" : "You lose";
@@ -206,14 +209,14 @@ function playGame() {
     
     
     function createGameState() {
-        document.body.appendChild(playerClass.element);
+        gameScreen.appendChild(playerClass.element);
     
         // Create finish flag
         let finishFlag = document.createElement("div");
         finishFlag.classList.add('finish-flag');
         finishFlag.style.left = levelWidth.toString() + "px";
         finishFlag.id = "finish";
-        document.body.appendChild(finishFlag);
+        gameScreen.appendChild(finishFlag);
 
         // Create Game width
         //<div class="gameScreen" style="width: 500vw; height: 1px; background-color: black;"> </div>
@@ -221,12 +224,12 @@ function playGame() {
         width.style.width = levelWidth.toString() + "px";
         width.style.backgroundColor = "black";
         width.style.height = "1px";
-        document.body.appendChild(width);
+        gameScreen.appendChild(width);
 
         let scoreElement = document.createElement("span");
         scoreElement.id = "score";
         scoreElement.innerText = "0";
-        document.body.appendChild(scoreElement);
+        gameScreen.appendChild(scoreElement);
 
     }
 
