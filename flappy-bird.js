@@ -9,7 +9,7 @@ var scrollAmount = 13;
 var localHighscores = [
     {
         name: "Owen",
-        highscore: 15
+        highscore: 999
     },
     {
         name:"Dom",
