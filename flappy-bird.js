@@ -11,8 +11,6 @@ var gameScreenClass = new GameScreen();
 var gameScreen = gameScreenClass.gameScreen;
 var scrollAmount = 13;
 var allScores = [];
-
-var userName = "guest";
 function createAllScreens (hasWon) {
     window.menuScreen = new MenuScreen();
     window.instructionScreen = new InstructionScreen();

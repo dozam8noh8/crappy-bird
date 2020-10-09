@@ -191,9 +191,9 @@ class Player{
         await delay(400);
         gameScreen.innerHTML = '';                // Clears everything within the gamescreen
         walls = []
-        userName = prompt("Enter name for the highscores", "guest");
+        let userName = prompt("Enter name for the highscores", "guest");
         let highscoreObj = {
-            name: userName,
+            name: userName || "guest",
             score: score
         }
         updateHighscores(highscoreObj);
