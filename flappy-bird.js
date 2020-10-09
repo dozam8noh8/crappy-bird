@@ -5,35 +5,38 @@ var walls = [];
 var score = 0;
 var gameScreenClass = new GameScreen();
 var gameScreen = gameScreenClass.gameScreen;
+var scrollAmount = 13;
+var localHighscores = [
+    {
+        name: "Owen",
+        highscore: 15
+    },
+    {
+        name:"Dom",
+        highscore: 0
+    }]
+var userName = "guest";
 
 function createAllScreens (hasWon) {
     window.menuScreen = new MenuScreen();
+    window.instructionScreen = new InstructionScreen();
+    window.highscoreScreen = new HighscoreScreen();
     let endText = hasWon ? "You win!" : "You lose";
     window.endScreen = new EndScreen(endText);
-    window.instructionScreen = new InstructionScreen();
 }
 createAllScreens();
 showMainMenu();
-function showMainMenu() {
-    hideAll();
-    window.menuScreen.show();
-}
-function showEndScreen() {
-    hideAll();
-    window.endScreen.show();
-}
-function showInstructions () {
-    hideAll();
-    window.instructionScreen.show();
-}
+
 function hideAll() {
     window.menuScreen.hide();
     window.endScreen.hide();
     window.instructionScreen.hide();
+    window.highscoreScreen.hide();
 }
 function addToScore() {
     let scoreElement = document.getElementById("score");
-    scoreElement.innerText = parseInt(scoreElement.innerText) + 1;
+    score += 1;
+    scoreElement.innerText = score;
 }
 function playGame() {
     // Hide the window.menuScreen
@@ -53,7 +56,7 @@ function playGame() {
     let gravity = 5;
     Wall.nextWall = 600;
 
-    let scrollAmount = parseInt(scroller?.value) || 13;
+    scrollAmount = parseInt(scroller?.value) || scrollAmount;
     let gravitySpeed = 0;
     let gravityInterval = setInterval(applyGravity, 100);
     let screenScrollingInterval = setInterval(scrollScreen,50);
@@ -197,6 +200,7 @@ function playGame() {
             // Collision logic for rectangles
             if (prop.left < border.right && prop.right > border.left
                 && prop.top < border.bottom && prop.bottom > border.top) {
+                    object.style.backgroundColor = "yellow";
                     return true;
                 }
             }
@@ -237,6 +241,26 @@ function playGame() {
 function getWallElements() {
     return walls.map(wall => [wall.topWall, wall.botWall]).flat();
 }
+
+function showMainMenu() {
+    hideAll();
+    window.menuScreen.show();
+}
+function showEndScreen() {
+    hideAll();
+    window.endScreen.show();
+}
+function showInstructions () {
+    hideAll();
+    window.instructionScreen.show();
+}
+
+function showHighscores() {
+    hideAll();
+    window.highscoreScreen.show();
+}
+
+
 
 // Apparently this gets the scrollbar width.
 //Element.offsetWidth - Element.clientWidth

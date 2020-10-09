@@ -59,10 +59,10 @@ class MenuScreen {
             <button class="menu-button" onclick="playGame()">Play Game</button>
             <button class="menu-button" onclick="showInstructions()"> Instructions </button>
             <button class="menu-button" disabled="true" >Level Select (WIP)</button>
-            <button class="menu-button"  disabled="true"> View hiscores (WIP)</button>
+            <button class="menu-button" onclick="showHighscores()"> View hiscores (WIP)</button>
             <div>
                 <label> Difficulty
-                    0 <input type="range" id="scroll-slider" min="0" max="25"> 25    
+                    0 <input type="range" id="scroll-slider" min="0" max="25" value="${scrollAmount || 12.5}"> 25    
                 </label>
             </div>
         </div>
@@ -84,13 +84,17 @@ class Wall {
     topWall;
     botWall;
     minWallHeight = 150;
-    maxWallHeight = 700;
+    maxWallHeight = document.documentElement.clientHeight - 200;
     scoreConsumed = false; // A wall can only increase score once when a player passes through, once they are passed we set consume to true
     constructor() {
 
         let topWallHeight = this.minWallHeight + Math.random() * (this.maxWallHeight - this.minWallHeight);
         // We will have a 250px gap to squeeze through.
         let botWallHeight = document.documentElement.clientHeight - topWallHeight - 250;
+        // Makes the walls more visible
+        if (botWallHeight < 30) {
+            botWallHeight = 30;
+        }
         let wallWidth = 150;
 
         let playerC = player.getBoundingClientRect();
@@ -162,16 +166,25 @@ class Player{
     }
     async dead() {
         await this.endGame();
-        gameScreen.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
+        gameScreen.innerHTML = '';                // Clears everything within the gamescreen
         walls = []
+        userName = prompt("Enter name for the highscores", "guest");
+        let highscoreObj = {
+            name: userName,
+            highscore: score
+        }
+        localHighscores.push(highscoreObj);
         createAllScreens();
         hideAll();
+        score = 0;
+        scoreElement.innerText = score;
         window.endScreen.show();
             
     }
     async win() {
         await this.endGame();
-        document.body.innerHTML = '';                // Clears the whole DOM. TODO AVOID DOING THIS
+        gameScreen.innerHTML = '';                // Clears everything within the gamescreen
+        walls = []
         createAllScreens(true);
         hideAll();
         window.endScreen.show();
@@ -233,4 +246,50 @@ class EndScreen {
         window.menuScreen.show();
     }
 
+}
+
+class HighscoreScreen {
+    constructor () {
+        this.container = document.createElement("div");
+        this.container.classList.add("container");
+        this.container.id = "highscores-container";
+        this.update();
+        this.hide();
+        gameScreen.appendChild(this.container);
+    }
+
+    highscoresComparator(obj1, obj2) {
+        if (obj1.highscore > obj2.highscore) return -1;
+        if (obj1.highscore < obj2.highscore) return 1;
+        return 0;
+    }
+    show() {
+        this.container.style.display = "flex";
+    }
+    hide () {
+        this.container.style.display = "none";
+    }
+    update() {
+        localHighscores.sort(this.highscoresComparator)
+
+        let html = `
+            <font style=" position: absolute; top: 20%; font-size: 100px;"> Highscores! </font>
+            <div class="highscores">
+        `
+        for (let [i,highscore] of localHighscores.entries()) {
+            html += `
+            <div class="highscore"> 
+                <div> ${i+1}.&nbsp; ${highscore.name} </div>
+                <div> ${highscore.highscore} </div>
+            </div>
+            `
+            if (i >= 10) break;
+        }
+        html += `
+        <button class="menu-button" onclick="showMainMenu()"> Main Menu </button>
+        
+        </div>
+        `
+        this.container.innerHTML = html;
+    }
 }
