@@ -6,17 +6,9 @@ var score = 0;
 var gameScreenClass = new GameScreen();
 var gameScreen = gameScreenClass.gameScreen;
 var scrollAmount = 13;
-var localHighscores = [
-    {
-        name: "Owen",
-        highscore: 999
-    },
-    {
-        name:"Dom",
-        highscore: 0
-    }]
-var userName = "guest";
+var allScores = [];
 
+var userName = "guest";
 function createAllScreens (hasWon) {
     window.menuScreen = new MenuScreen();
     window.instructionScreen = new InstructionScreen();
@@ -24,8 +16,12 @@ function createAllScreens (hasWon) {
     let endText = hasWon ? "You win!" : "You lose";
     window.endScreen = new EndScreen(endText);
 }
-createAllScreens();
-showMainMenu();
+(async function waitForApi() {
+    await getHighscoresApi();
+    createAllScreens();
+    showMainMenu();
+})()
+
 
 function hideAll() {
     window.menuScreen.hide();
@@ -261,6 +257,7 @@ function showInstructions () {
 
 function showHighscores() {
     hideAll();
+    window.highscoreScreen.update();
     window.highscoreScreen.show();
 }
 

@@ -166,14 +166,6 @@ class Player{
     }
     async dead() {
         await this.endGame();
-        gameScreen.innerHTML = '';                // Clears everything within the gamescreen
-        walls = []
-        userName = prompt("Enter name for the highscores", "guest");
-        let highscoreObj = {
-            name: userName,
-            highscore: score
-        }
-        localHighscores.push(highscoreObj);
         createAllScreens();
         hideAll();
         window.endScreen.show();
@@ -181,8 +173,6 @@ class Player{
     }
     async win() {
         await this.endGame();
-        gameScreen.innerHTML = '';                // Clears everything within the gamescreen
-        walls = []
         createAllScreens(true);
         hideAll();
         window.endScreen.show();
@@ -199,7 +189,14 @@ class Player{
         await delay(400);
         player.style.backgroundColor = "white";
         await delay(400);
-
+        gameScreen.innerHTML = '';                // Clears everything within the gamescreen
+        walls = []
+        userName = prompt("Enter name for the highscores", "guest");
+        let highscoreObj = {
+            name: userName,
+            score: score
+        }
+        updateHighscores(highscoreObj);
     }
 }
 
@@ -257,8 +254,8 @@ class HighscoreScreen {
     }
 
     highscoresComparator(obj1, obj2) {
-        if (obj1.highscore > obj2.highscore) return -1;
-        if (obj1.highscore < obj2.highscore) return 1;
+        if (obj1.score > obj2.score) return -1;
+        if (obj1.score < obj2.score) return 1;
         return 0;
     }
     show() {
@@ -278,7 +275,7 @@ class HighscoreScreen {
             html += `
             <div class="highscore"> 
                 <div> ${i+1}.&nbsp; ${highscore.name} </div>
-                <div> ${highscore.highscore} </div>
+                <div> ${highscore.score} </div>
             </div>
             `
             if (i >= 10) break;
